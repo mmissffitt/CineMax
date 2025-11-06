@@ -1,19 +1,12 @@
 from django.urls import path
-from .views import root
-from django.shortcuts import render
+from . import views
 
-def movies_view(request):
-    return render(request, 'movies.html')
-
-def series_view(request):
-    return render(request, 'series.html')
-
-def subscriptions_view(request):
-    return render(request, 'subscriptions.html')
+app_name = 'kf_app' # Пространство имен приложения
 
 urlpatterns = [
-    path('', root, name='index'),
-    path('movies/', movies_view, name='movies'),
-    path('series/', series_view, name='series'),
-    path('subscriptions/', subscriptions_view, name='subscriptions'),
+    path('', views.index, name='index'),
+    path('movies/', views.movies_list, name='movies_list'),
+    path('series/', views.series_list, name='series_list'),
+    # path('movie/<int:pk>/', views.movie_detail, name='movie_detail'),
+    # path('series/<int:pk>/', views.series_detail, name='series_detail'), #это для будущего
 ]

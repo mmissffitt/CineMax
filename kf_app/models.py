@@ -1,7 +1,7 @@
 from django.db import models
 
 class User(models.Model):
-    email = models.EmailField("Почта", max_length=255)
+    email = models.EmailField("Почта", max_length=255, unique=True)
     first_name = models.CharField("Имя", max_length=100)
     last_name = models.CharField("Фамилия", max_length=100)
     birth_date = models.DateField("Дата рождения")
@@ -25,11 +25,13 @@ class MediaContent(models.Model):
     description = models.TextField("Описание")
     release_date = models.DateField("Дата выхода")
     country = models.CharField("Страна производства", max_length=100)
-    rating = models.FloatField("Рейтинг")
+    rating = models.FloatField("Рейтинг", default=0.0) 
     age_restriction = models.PositiveIntegerField("Возрастное ограничение")
-    duration = models.PositiveIntegerField("Длительность", null=True, blank=True) 
+    duration = models.PositiveIntegerField("Длительность (мин)", null=True, blank=True) 
     content_type = models.CharField("Тип", max_length=10, choices=CONTENT_TYPES)
     genres = models.ManyToManyField('Genre', verbose_name="Жанры")
+    image = models.ImageField("Изображение", upload_to="media_content_images/", null=True, blank=True)
+    poster = models.ImageField("Постер", upload_to="media_content_posters/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Медиаконтент"
@@ -37,26 +39,6 @@ class MediaContent(models.Model):
 
     def __str__(self):
         return self.title
-
-class Review(models.Model):
-    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
-    media_content = models.ForeignKey(MediaContent, verbose_name="Медиаконтент", on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField("Оценка")
-    review_text = models.TextField("Текст отзыва")
-    created_at = models.DateTimeField("Дата создания", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'media_content'],
-                name='unique_user_media_review'
-            )
-        ]
-
-    def __str__(self):  
-        return f"Отзыв {self.user} на {self.media_content}"
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
@@ -80,7 +62,7 @@ class ViewHistory(models.Model):
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     media_content = models.ForeignKey(MediaContent, verbose_name="Медиаконтент", on_delete=models.CASCADE, null=True, blank=True)
     episode = models.ForeignKey('Episode', verbose_name="Эпизод", on_delete=models.CASCADE, null=True, blank=True)  
-    viewed_at = models.DateTimeField("Дата и время просмотра")
+    viewed_at = models.DateTimeField("Дата и время просмотра", auto_now_add=True) 
     viewed_seconds = models.PositiveIntegerField("Просмотрено секунд")
 
     class Meta:
@@ -128,7 +110,7 @@ class UserSubscription(models.Model):
     
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, verbose_name="Подписка", on_delete=models.CASCADE)
-    status = models.CharField("Статус подписки", max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField("Статус подписки", max_length=10, choices=STATUS_CHOICES, default='ACTIVE') # Добавлено значение по умолчанию
     start_date = models.DateField("Дата начала")
     end_date = models.DateField("Дата окончания")
     auto_renewal = models.BooleanField("Автопродление", default=False)
@@ -144,8 +126,9 @@ class UserSubscription(models.Model):
 class Person(models.Model):
     first_name = models.CharField("Имя", max_length=100)
     last_name = models.CharField("Фамилия", max_length=100)
-    biography = models.TextField("Биография")
-    media_content = models.ManyToManyField(MediaContent, through='ContentParticipation', verbose_name="Участие в контенте")
+    biography = models.TextField("Биография", blank=True)
+    photo = models.ImageField("Фотография", upload_to="persons/", null=True, blank=True)
+    media_content = models.ManyToManyField(MediaContent, through='ContentParticipation', verbose_name="Участие в контенте") 
 
     class Meta:
         verbose_name = "Персона"
@@ -173,6 +156,7 @@ class ContentParticipation(models.Model):
     class Meta:
         verbose_name = "Участие в контенте"
         verbose_name_plural = "Участие в контенте"
+        unique_together = ('media_content', 'person', 'role')
 
     def __str__(self):  
         return f"{self.person} - {self.media_content} ({self.role})"
@@ -189,7 +173,7 @@ class Genre(models.Model):
         return self.name
 
 class Season(models.Model):
-    media_content = models.ForeignKey(MediaContent, verbose_name="Медиаконтент", on_delete=models.CASCADE)
+    media_content = models.ForeignKey(MediaContent, verbose_name="Медиаконтент", on_delete=models.CASCADE, limit_choices_to={'content_type': 'SERIES'}) # Ограничение выбора только для сериалов
     season_number = models.PositiveIntegerField("Номер сезона")
     description = models.TextField("Описание", blank=True)
 
@@ -202,6 +186,7 @@ class Season(models.Model):
                 name='unique_media_season'
             )
         ]
+        ordering = ['season_number'] 
 
     def __str__(self):
         return f"{self.media_content.title} - Сезон {self.season_number}"
@@ -211,8 +196,8 @@ class Episode(models.Model):
     episode_number = models.PositiveIntegerField("Номер эпизода")
     title = models.CharField("Название", max_length=255)
     description = models.TextField("Описание", blank=True)
-    duration = models.PositiveIntegerField("Длительность")
-    release_date = models.DateField("Дата выхода эпизода")
+    duration = models.PositiveIntegerField("Длительность (мин)")
+    release_date = models.DateField("Дата выхода эпизода", null=True, blank=True) 
 
     class Meta:
         verbose_name = "Эпизод"
@@ -223,6 +208,7 @@ class Episode(models.Model):
                 name='unique_season_episode'
             )
         ]
+        ordering = ['episode_number'] 
 
     def __str__(self):
         return f"{self.season} - Эпизод {self.episode_number}: {self.title}"

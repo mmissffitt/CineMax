@@ -1,13 +1,29 @@
 from django.shortcuts import render
+from .models import MediaContent
 
-def root(request):
-    return render(request, 'index.html')
 
-def movies_view(request):
-    return render(request, 'movies.html')
+def index(request):
+    movies_sample = MediaContent.objects.filter(content_type='MOVIE')[:4] 
+    series_sample = MediaContent.objects.filter(content_type='SERIES')[:4] 
+    context = {
+        'movies_sample': movies_sample,
+        'series_sample': series_sample,
+        'title': 'Главная страница CINEMAX',
+    }
+    return render(request, 'kf_app/index.html', context)
 
-def series_view(request):
-    return render(request, 'series.html')
+def movies_list(request):
+    movies = MediaContent.objects.filter(content_type='MOVIE').order_by('-release_date')
+    context = {
+        'movies': movies,
+        'title': 'Все фильмы CINEMAX',
+    }
+    return render(request, 'kf_app/movies.html', context)
 
-def subscriptions_view(request):
-    return render(request, 'subscriptions.html')
+def series_list(request):
+    series = MediaContent.objects.filter(content_type='SERIES').order_by('-release_date')
+    context = {
+        'series': series,
+        'title': 'Все сериалы CINEMAX',
+    }
+    return render(request, 'kf_app/series.html', context)

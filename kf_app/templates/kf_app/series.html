@@ -1,0 +1,27 @@
+{% extends 'kf_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <h2 class="section-title">Все сериалы</h2>
+        <div class="content-grid">
+            {% for serie in series %}
+                <div class="content-item-large">
+                    <a href="#"> {# Ссылка на страницу детали сериала #}
+                        {% if serie.poster %}
+                            <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster">
+                        {% else %}
+                            <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ serie.title }}" class="content-poster">
+                        {% endif %}
+                        <h3 class="content-title">{{ serie.title }}</h3>
+                        <p class="content-info">{{ serie.release_date|date:"d.m.Y" }} | Рейтинг: {{ serie.rating }}</p>
+                    </a>
+                </div>
+            {% empty %}
+                <p>Сериалов пока нет.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
