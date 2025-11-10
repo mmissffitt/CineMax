@@ -151,9 +151,12 @@ a:hover {
 
 .btn:hover {
     background-color: #ff3333;
+    color: #fff !important; 
 }
 
-
+a.btn:hover {
+    color: #fff;
+}
 /* Footer */
 .footer {
     background-color: #000;

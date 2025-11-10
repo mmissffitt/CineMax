@@ -1,15 +1,13 @@
 {% extends 'kf_app/base.html' %}
 {% load static %}
 
-{% block title %}{{ title }}{% endblock %}
-
 {% block content %}
     <section class="section">
         <h2 class="section-title">Все сериалы</h2>
         <div class="content-grid">
             {% for serie in series %}
                 <div class="content-item-large">
-                    <a href="#"> {# Ссылка на страницу детали сериала #}
+                    <a href="#"> {# тут будет ссылка на страницу детали сериала #}
                         {% if serie.poster %}
                             <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster">
                         {% else %}

@@ -16,7 +16,6 @@ def movies_list(request):
     movies = MediaContent.objects.filter(content_type='MOVIE').order_by('-release_date')
     context = {
         'movies': movies,
-        'title': 'Все фильмы CINEMAX',
     }
     return render(request, 'kf_app/movies.html', context)
 
@@ -24,6 +23,5 @@ def series_list(request):
     series = MediaContent.objects.filter(content_type='SERIES').order_by('-release_date')
     context = {
         'series': series,
-        'title': 'Все сериалы CINEMAX',
     }
     return render(request, 'kf_app/series.html', context)
