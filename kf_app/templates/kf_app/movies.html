@@ -7,7 +7,7 @@
         <div class="content-grid">
             {% for movie in movies %}
                 <div class="content-item-large">
-                    <a href="#"> {# будет тут cсылка на страницу детали фильма #}
+                    <a href="{% url 'kf_app:movie_detail' movie.pk %}">
                         {% if movie.poster %}
                             <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="content-poster">
                         {% else %}

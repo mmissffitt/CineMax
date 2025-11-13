@@ -7,7 +7,7 @@
         <div class="content-list">
             {% for movie in movies_sample %}
                 <div class="content-item">
-                    <a href="#">
+                    <a href="{% url 'kf_app:movie_detail' movie.pk %}">
                         {% if movie.poster %}
                             <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="content-poster">
                         {% else %}
@@ -31,7 +31,7 @@
         <div class="content-list">
             {% for serie in series_sample %}
                 <div class="content-item">
-                    <a href="#">
+                    <a href="{% url 'kf_app:series_detail' serie.pk %}">
                         {% if serie.poster %}
                             <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster">
                         {% else %}

@@ -1,0 +1,64 @@
+{% extends 'kf_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="episode-detail">
+    <!-- Навигация -->
+    <div class="episode-navigation">
+        <a href="{% url 'kf_app:series_detail' series.pk %}" class="back-link">
+            ← Назад к сериалу "{{ series.title }}"
+        </a>
+        <span class="episode-path">Сезон {{ season.season_number }} • Эпизод {{ episode.episode_number }}</span>
+    </div>
+
+    <!-- Видеоплеер -->
+    {% if episode.video_file %}
+    <div class="video-player-container">
+        <video id="episodeVideo" controls width="100%">
+            <source src="{{ episode.video_file.url }}" type="video/mp4">
+            Ваш браузер не поддерживает видео тег.
+        </video>
+    </div>
+    {% else %}
+    <div class="video-placeholder">
+        <p>Видео недоступно</p>
+    </div>
+    {% endif %}
+
+    <!-- Информация об эпизоде -->
+    <div class="episode-info">
+        <h1 class="episode-full-title">
+            {{ series.title }} - Сезон {{ season.season_number }}, Эпизод {{ episode.episode_number }}: {{ episode.title }}
+        </h1>
+        
+        <div class="episode-meta">
+            <span class="duration">{{ episode.duration }} мин</span>
+            {% if episode.release_date %}
+                <span class="release-date">{{ episode.release_date|date:"d.m.Y" }}</span>
+            {% endif %}
+        </div>
+
+        {% if episode.description %}
+            <div class="episode-description">
+                <h3>Описание эпизода:</h3>
+                <p>{{ episode.description }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Навигация между эпизодами -->
+        <div class="episode-navigation-buttons">
+            {% if episode.get_previous_episode %}
+                <a href="{% url 'kf_app:episode_detail' episode.get_previous_episode.id %}" class="btn btn-prev">
+                    ← Предыдущий эпизод
+                </a>
+            {% endif %}
+            
+            {% if episode.get_next_episode %}
+                <a href="{% url 'kf_app:episode_detail' episode.get_next_episode.id %}" class="btn btn-next">
+                    Следующий эпизод →
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

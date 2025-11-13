@@ -32,6 +32,15 @@ class MediaContent(models.Model):
     genres = models.ManyToManyField('Genre', verbose_name="Жанры")
     image = models.ImageField("Изображение", upload_to="media_content_images/", null=True, blank=True)
     poster = models.ImageField("Постер", upload_to="media_content_posters/", null=True, blank=True)
+    
+    # Добавляем видео для фильмов
+    video_file = models.FileField(
+        "Видеофайл", 
+        upload_to="media_content_videos/", 
+        null=True, 
+        blank=True,
+        help_text="Загрузите видеофайл (для фильмов)"
+    )
 
     class Meta:
         verbose_name = "Медиаконтент"
@@ -197,7 +206,16 @@ class Episode(models.Model):
     title = models.CharField("Название", max_length=255)
     description = models.TextField("Описание", blank=True)
     duration = models.PositiveIntegerField("Длительность (мин)")
-    release_date = models.DateField("Дата выхода эпизода", null=True, blank=True) 
+    release_date = models.DateField("Дата выхода эпизода", null=True, blank=True)
+    
+    # Добавляем поле для видео эпизода
+    video_file = models.FileField(
+        "Видеофайл эпизода", 
+        upload_to="episode_videos/", 
+        null=True, 
+        blank=True,
+        help_text="Загрузите видеофайл для этого эпизода"
+    )
 
     class Meta:
         verbose_name = "Эпизод"
@@ -210,5 +228,25 @@ class Episode(models.Model):
         ]
         ordering = ['episode_number'] 
 
+    def get_previous_episode(self):
+        try:
+            return Episode.objects.filter(
+                season=self.season,
+                episode_number__lt=self.episode_number
+            ).order_by('-episode_number').first()
+        except Episode.DoesNotExist:
+            return None
+
+    def get_next_episode(self):
+        try:
+            return Episode.objects.filter(
+                season=self.season,
+                episode_number__gt=self.episode_number
+            ).order_by('episode_number').first()
+        except Episode.DoesNotExist:
+            return None
+
     def __str__(self):
         return f"{self.season} - Эпизод {self.episode_number}: {self.title}"
+    
+    

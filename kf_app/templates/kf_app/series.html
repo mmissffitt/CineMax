@@ -7,7 +7,7 @@
         <div class="content-grid">
             {% for serie in series %}
                 <div class="content-item-large">
-                    <a href="#"> {# тут будет ссылка на страницу детали сериала #}
+                    <a href="{% url 'kf_app:series_detail' serie.pk %}">
                         {% if serie.poster %}
                             <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster">
                         {% else %}

@@ -1,0 +1,88 @@
+{% extends 'kf_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="media-detail">
+    <div class="media-header">
+        <div class="media-poster-section">
+            {% if media.poster %}
+                <img src="{{ media.poster.url }}" alt="{{ media.title }}" class="detail-poster">
+            {% else %}
+                <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ media.title }}" class="detail-poster">
+            {% endif %}
+        </div>
+        
+        <div class="media-info-section">
+            <h1 class="media-title">{{ media.title }}</h1>
+            
+            <div class="media-meta">
+                <span class="release-year">{{ media.release_date|date:"Y" }}</span>
+                <span class="age-restriction">{{ media.age_restriction }}+</span>
+                <span class="rating">★ {{ media.rating }}</span>
+                {% if media.duration %}
+                    <span class="duration">{{ media.duration }} мин</span>
+                {% endif %}
+                <span class="country">{{ media.country }}</span>
+            </div>
+            
+            <p class="media-description">{{ media.description }}</p>
+            
+            <div class="media-actions">
+                {% if media.video_file %}
+                    <button class="btn btn-play" onclick="playVideo()">Смотреть фильм</button>
+                {% else %}
+                    <button class="btn btn-disabled" disabled>Видео недоступно</button>
+                {% endif %}
+                <button class="btn btn-favorite">В избранное</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Видеоплеер для фильмов -->
+    {% if media.video_file %}
+    <div id="videoPlayer" class="video-player" style="display: none;">
+        <video id="mediaVideo" controls width="100%">
+            <source src="{{ media.video_file.url }}" type="video/mp4">
+            Ваш браузер не поддерживает видео тег.
+        </video>
+        <button class="btn btn-close-video" onclick="closeVideo()">Закрыть</button>
+    </div>
+    {% endif %}
+
+    <!-- Актеры и съемочная группа -->
+    {% if participants %}
+    <section class="cast-section">
+        <h2 class="section-title">Актеры и съемочная группа</h2>
+        <div class="cast-grid">
+            {% for participant in participants %}
+            <div class="cast-item">
+                {% if participant.person.photo %}
+                    <img src="{{ participant.person.photo.url }}" alt="{{ participant.person }}" class="cast-photo">
+                {% else %}
+                    <div class="cast-photo placeholder">Фото</div>
+                {% endif %}
+                <h3 class="cast-name">{{ participant.person.first_name }} {{ participant.person.last_name }}</h3>
+                <p class="cast-role">
+                    {{ participant.get_role_display }}
+                    {% if participant.role_name %}({{ participant.role_name }}){% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<script>
+function playVideo() {
+    document.getElementById('videoPlayer').style.display = 'block';
+    document.getElementById('mediaVideo').play();
+    document.getElementById('videoPlayer').scrollIntoView({ behavior: 'smooth' });
+}
+
+function closeVideo() {
+    document.getElementById('videoPlayer').style.display = 'none';
+    document.getElementById('mediaVideo').pause();
+}
+</script>
+{% endblock %}
