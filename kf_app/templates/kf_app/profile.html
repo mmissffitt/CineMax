@@ -1,0 +1,48 @@
+{% extends 'kf_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ username|first|upper }}
+        </div>
+        <h1>{{ username }}</h1>
+        <p>Участник CINEMAX</p>
+    </div>
+
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Просмотрено фильмов</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">В избранном</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Серий просмотрено</div>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <h2>Информация профиля</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Имя пользователя:</strong> {{ username }}
+            </div>
+            <div class="info-item">
+                <strong>Email:</strong> {{ email|default:"Не указан" }}
+            </div>
+            <div class="info-item">
+                <strong>Статус:</strong> Активный
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'kf_app:logout' %}" class="btn-logout">Выйти из аккаунта</a>
+    </div>
+</div>
+{% endblock %}

@@ -15,6 +15,18 @@
                 <ul>
                     <li><a href="{% url 'kf_app:movies_list' %}">Фильмы</a></li>
                     <li><a href="{% url 'kf_app:series_list' %}">Сериалы</a></li>
+                    {% if request.session.is_authenticated %}
+                        <li class="user-menu">
+                            <a href="{% url 'kf_app:profile' %}">Профиль</a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'kf_app:profile' %}">Мой профиль</a></li>
+                                <li><a href="{% url 'kf_app:logout' %}">Выйти</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'kf_app:login' %}">Войти</a></li>
+                        <li><a href="{% url 'kf_app:register' %}" class="btn-register">Регистрация</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
