@@ -29,11 +29,11 @@
             
             <div class="media-actions">
                 {% if media.video_file %}
-                    <button class="btn btn-play" onclick="playVideo()">Смотреть фильм</button>
+                    <button class="btn btn-primary" onclick="playVideo()">Смотреть фильм</button>
                 {% else %}
                     <button class="btn btn-disabled" disabled>Видео недоступно</button>
                 {% endif %}
-                <button class="btn btn-favorite">В избранное</button>
+                <button class="btn btn-secondary">В избранное</button>
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@
             <source src="{{ media.video_file.url }}" type="video/mp4">
             Ваш браузер не поддерживает видео тег.
         </video>
-        <button class="btn btn-close-video" onclick="closeVideo()">Закрыть</button>
+        <button class="btn btn-close" onclick="closeVideo()">Закрыть</button>
     </div>
     {% endif %}
 
