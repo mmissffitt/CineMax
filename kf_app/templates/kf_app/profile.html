@@ -3,36 +3,59 @@
 
 {% block content %}
 <div class="profile-container">
+    <!-- Хедер профиля -->
     <div class="profile-header">
-        <div class="profile-avatar">
+        <div class="profile-avatar-large">
             {{ username|first|upper }}
         </div>
-        <h1>{{ username }}</h1>
-        <p>Участник CINEMAX</p>
+        <div class="profile-info">
+            <h1 class="profile-username">{{ username }}</h1>
+            <p class="profile-email">{{ email }}</p>
+        </div>
     </div>
 
-    <div class="profile-sections">
-        <a href="#" class="profile-section-link">
-            <div class="profile-section">
-                <h2>История просмотров</h2>
+    <!-- Основные разделы в хедере -->
+    <div class="profile-sections-grid">
+        <a href="#" class="profile-card">
+            <div class="card-content">
+                <h3>История просмотров</h3>
+                <p>Ваши недавние просмотры</p>
             </div>
         </a>
 
-        <a href="#" class="profile-section-link">
-            <div class="profile-section">
-                <h2>Избранное</h2>
+        <a href="#" class="profile-card">
+            <div class="card-content">
+                <h3>Избранное</h3>
+                <p>Сохраненные фильмы и сериалы</p>
             </div>
         </a>
 
-        <a href="#" class="profile-section-link">
-            <div class="profile-section">
-                <h2>Отложенное</h2>
+        <a href="#" class="profile-card">
+            <div class="card-content">
+                <h3>Смотреть позже</h3>
+                <p>Отложенный контент</p>
+            </div>
+        </a>
+
+        <a href="#" class="profile-card">
+            <div class="card-content">
+                <h3>Мои оценки</h3>
+                <p>Оцененные фильмы и сериалы</p>
             </div>
         </a>
     </div>
 
+    <!-- Действия профиля -->
     <div class="profile-actions">
-        <a href="{% url 'kf_app:logout' %}" class="btn-logout">Выйти из аккаунта</a>
+        <a href="#" class="profile-action-btn">
+            Настройки аккаунта
+        </a>
+        <a href="#" class="profile-action-btn">
+            Безопасность
+        </a>
+        <a href="{% url 'kf_app:logout' %}" class="profile-action-btn logout-btn">
+            Выйти
+        </a>
     </div>
 </div>
 {% endblock %}
