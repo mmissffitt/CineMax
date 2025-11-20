@@ -1,11 +1,24 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import MediaContent, ContentParticipation, Season, Episode
 
+REGISTERED_USERS = {}
+
 def index(request):
+    # Обработка формы обратной связи
+    if request.method == 'POST' and 'name' in request.POST:
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        
+        request.session['feedback_success'] = True
+        return redirect('kf_app:index')
+    
+    # Берем флаг из сессии и СРАЗУ УДАЛЯЕМ его
+    feedback_success = request.session.pop('feedback_success', False)
+    
     movies_sample = MediaContent.objects.filter(content_type='MOVIE')[:4] 
     series_sample = MediaContent.objects.filter(content_type='SERIES')[:4] 
     
-    # Получаем имя пользователя из сессии
     username = request.session.get('username', None)
     
     context = {
@@ -13,6 +26,7 @@ def index(request):
         'series_sample': series_sample,
         'title': 'Главная страница CINEMAX',
         'username': username,
+        'feedback_success': feedback_success,
     }
     return render(request, 'kf_app/index.html', context)
 
@@ -72,12 +86,21 @@ def episode_detail(request, episode_id):
 # Страница входа
 def login_view(request):
     if request.method == 'POST':
-        # Простая "аутентификация" - просто запоминаем в сессии
         username = request.POST.get('username')
-        if username:
+        password = request.POST.get('password')
+        
+        # Проверяем существование пользователя в глобальном словаре
+        if username in REGISTERED_USERS and REGISTERED_USERS[username]['password'] == password:
             request.session['is_authenticated'] = True
             request.session['username'] = username
+            request.session['email'] = REGISTERED_USERS[username]['email']
             return redirect('kf_app:index')
+        else:
+            context = {
+                'title': 'Вход в CINEMAX',
+                'error': 'Неверное имя пользователя или пароль'
+            }
+            return render(request, 'kf_app/login.html', context)
     
     context = {
         'title': 'Вход в CINEMAX'
@@ -87,14 +110,28 @@ def login_view(request):
 # Страница регистрации
 def register_view(request):
     if request.method == 'POST':
-        # Простая "регистрация" - просто запоминаем в сессии
         username = request.POST.get('username')
         email = request.POST.get('email')
-        if username:
-            request.session['is_authenticated'] = True
-            request.session['username'] = username
-            request.session['email'] = email
-            return redirect('kf_app:index')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if password != confirm_password:
+            context = {
+                'title': 'Регистрация в CINEMAX',
+                'error': 'Пароли не совпадают'
+            }
+            return render(request, 'kf_app/register.html', context)
+        
+        # Сохраняем пользователя в глобальный словарь
+        REGISTERED_USERS[username] = {
+            'email': email,
+            'password': password
+        }
+        
+        request.session['is_authenticated'] = True
+        request.session['username'] = username
+        request.session['email'] = email
+        return redirect('kf_app:index')
     
     context = {
         'title': 'Регистрация в CINEMAX'
@@ -118,6 +155,5 @@ def profile_view(request):
 
 # Выход
 def logout_view(request):
-    # Очищаем сессию
     request.session.flush()
     return redirect('kf_app:index')

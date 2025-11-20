@@ -11,34 +11,24 @@
         <p>Участник CINEMAX</p>
     </div>
 
-    <div class="profile-stats">
-        <div class="stat-card">
-            <div class="stat-number">0</div>
-            <div class="stat-label">Просмотрено фильмов</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">0</div>
-            <div class="stat-label">В избранном</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">0</div>
-            <div class="stat-label">Серий просмотрено</div>
-        </div>
-    </div>
+    <div class="profile-sections">
+        <a href="#" class="profile-section-link">
+            <div class="profile-section">
+                <h2>История просмотров</h2>
+            </div>
+        </a>
 
-    <div class="profile-info">
-        <h2>Информация профиля</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <strong>Имя пользователя:</strong> {{ username }}
+        <a href="#" class="profile-section-link">
+            <div class="profile-section">
+                <h2>Избранное</h2>
             </div>
-            <div class="info-item">
-                <strong>Email:</strong> {{ email|default:"Не указан" }}
+        </a>
+
+        <a href="#" class="profile-section-link">
+            <div class="profile-section">
+                <h2>Отложенное</h2>
             </div>
-            <div class="info-item">
-                <strong>Статус:</strong> Активный
-            </div>
-        </div>
+        </a>
     </div>
 
     <div class="profile-actions">

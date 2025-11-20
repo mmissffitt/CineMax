@@ -6,6 +6,12 @@
     <div class="auth-form">
         <h2 class="auth-title">Регистрация в CINEMAX</h2>
         
+        {% if error %}
+        <div style="color: #e50914; text-align: center; margin-bottom: 20px; padding: 10px; background: #1a1a1a; border-radius: 5px;">
+            {{ error }}
+        </div>
+        {% endif %}
+        
         <form method="POST" class="simple-form">
             {% csrf_token %}
             <div class="form-group">
