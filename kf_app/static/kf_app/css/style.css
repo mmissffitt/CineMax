@@ -1058,3 +1058,183 @@ a:hover {
         padding: 15px;
     }
 }
+
+/* ===== ОБНОВЛЕННЫЕ СТИЛИ ===== */
+
+/* Многоуровневый фон */
+.content-wrapper {
+    background: 
+        /* Темный фон заднего слоя */
+        radial-gradient(circle at 20% 80%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+        /* Основной градиентный фон */
+        linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    min-height: calc(100vh - 180px);
+    position: relative;
+}
+
+.content-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Текстура шума */
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>'),
+        /* Легкая текстура */
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px);
+    pointer-events: none;
+}
+
+/* Основной контент на переднем плане */
+.main-content {
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    margin: 0;
+    padding: 40px 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Секции с приподнятым эффектом */
+.section {
+    background: rgba(35, 35, 35, 0.8);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e50914, #ff4757);
+    border-radius: 15px 15px 0 0;
+}
+
+/* Навигация по центру */
+.header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo {
+    margin-bottom: 15px;
+    font-size: 2.8em;
+    text-align: center;
+}
+
+.nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nav ul {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav li {
+    margin: 0;
+}
+
+/* Улучшенные кнопки на главной */
+.more-link .btn {
+    margin-top: 10px;
+    font-size: 1.1em;
+    padding: 14px 35px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+    transition: all 0.3s ease;
+}
+
+.more-link .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(229, 9, 20, 0.5);
+}
+
+/* Карточки контента с улучшенным дизайном */
+.content-item, .content-item-large {
+    background: linear-gradient(145deg, #2a2a2a, #222222);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.content-item:hover, .content-item-large:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 12px 35px rgba(229, 9, 20, 0.3),
+        0 0 0 1px rgba(229, 9, 20, 0.2);
+}
+
+/* Адаптивность для навигации */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav ul {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .logo {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+    
+    .section {
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .content-wrapper::before {
+        background-size: 200px 200px, auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav ul {
+        gap: 15px;
+    }
+    
+    .nav li {
+        font-size: 0.9em;
+    }
+    
+    .logo {
+        font-size: 1.8em;
+    }
+    
+    .more-link .btn {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+}

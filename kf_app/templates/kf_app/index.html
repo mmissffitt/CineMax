@@ -22,7 +22,8 @@
             {% endfor %}
         </div>
         <div class="more-link">
-            <a href="{% url 'kf_app:movies_list' %}" class="btn">Все фильмы &raquo;</a>
+            <!-- Меняем класс на btn-primary для красного фона -->
+            <a href="{% url 'kf_app:movies_list' %}" class="btn btn-primary">Все фильмы &raquo;</a>
         </div>
     </section>
 
@@ -46,7 +47,8 @@
             {% endfor %}
         </div>
         <div class="more-link">
-            <a href="{% url 'kf_app:series_list' %}" class="btn">Все сериалы &raquo;</a>
+            <!-- Меняем класс на btn-primary для красного фона -->
+            <a href="{% url 'kf_app:series_list' %}" class="btn btn-primary">Все сериалы &raquo;</a>
         </div>
     </section>
 
