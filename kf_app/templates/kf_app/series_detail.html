@@ -2,104 +2,125 @@
 {% load static %}
 
 {% block content %}
-<div class="media-detail">
-    <div class="media-header">
-        <div class="media-poster-section">
-            {% if media.poster %}
-                <img src="{{ media.poster.url }}" alt="{{ media.title }}" class="detail-poster">
-            {% else %}
-                <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ media.title }}" class="detail-poster">
-            {% endif %}
-        </div>
-        
-        <div class="media-info-section">
-            <h1 class="media-title">{{ media.title }}</h1>
-            
-            <div class="media-meta">
-                <span class="release-year">{{ media.release_date|date:"Y" }}</span>
-                <span class="age-restriction">{{ media.age_restriction }}+</span>
-                <span class="rating">★ {{ media.rating }}</span>
-                <span class="country">{{ media.country }}</span>
-            </div>
-            
-            <p class="media-description">{{ media.description }}</p>
-            
-            <div class="series-stats">
-    <p>Сезонов: {{ seasons|length }}</p>
-    <p>Всего эпизодов: {{ total_episodes }}</p>
-</div>
-        </div>
-    </div>
-<div class="media-actions">
-    <button class="btn btn-secondary">В избранное</button>
-    <button class="btn btn-secondary">Смотреть позже</button>
-</div>
-
-    <!-- Актеры и съемочная группа -->
-    {% if participants %}
-    <section class="cast-section">
-        <h2 class="section-title">Актеры и съемочная группа</h2>
-        <div class="cast-grid">
-            {% for participant in participants %}
-            <div class="cast-item">
-                {% if participant.person.photo %}
-                    <img src="{{ participant.person.photo.url }}" alt="{{ participant.person }}" class="cast-photo">
+<div class="media-container">
+    <div class="media-detail">
+        <div class="media-header">
+            <div class="media-poster-section">
+                {% if media.poster %}
+                    <img src="{{ media.poster.url }}" alt="{{ media.title }}" class="detail-poster">
                 {% else %}
-                    <div class="cast-photo placeholder">Фото</div>
+                    <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ media.title }}" class="detail-poster">
                 {% endif %}
-                <h3 class="cast-name">{{ participant.person.first_name }} {{ participant.person.last_name }}</h3>
-                <p class="cast-role">
-                    {{ participant.get_role_display }}
-                    {% if participant.role_name %}({{ participant.role_name }}){% endif %}
-                </p>
             </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Сезоны и эпизоды -->
-    {% if seasons %}
-    <section class="seasons-section">
-        <h2 class="section-title">Сезоны и эпизоды</h2>
-        {% for season in seasons %}
-        <div class="season">
-            <h3 class="season-title">Сезон {{ season.season_number }}</h3>
-            {% if season.description %}
-                <p class="season-description">{{ season.description }}</p>
-            {% endif %}
             
-            <div class="episodes-list">
-                {% for episode in season.episode_set.all %}
-                <div class="episode-item">
-                    <div class="episode-number">Эпизод {{ episode.episode_number }}</div>
-                    <div class="episode-info">
-                        <h4 class="episode-title">{{ episode.title }}</h4>
-                        <p class="episode-meta">
-                            {{ episode.duration }} мин
-                            {% if episode.release_date %}
-                                • {{ episode.release_date|date:"d.m.Y" }}
-                            {% endif %}
-                        </p>
-                        {% if episode.description %}
-                            <p class="episode-description">{{ episode.description }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="episode-actions">
-                        {% if episode.video_file %}
-                           <a href="{% url 'kf_app:episode_detail' episode.id %}" class="btn btn-primary">
-                         Смотреть
-                        </a>
-                        {% else %}
-                            <button class="btn btn-disabled" disabled>Скоро</button>
-                        {% endif %}
-                    </div>
+            <div class="media-info-section">
+                <h1 class="media-title">{{ media.title }}</h1>
+                
+                <div class="media-meta">
+                    <span class="release-year">{{ media.release_date|date:"Y" }}</span>
+                    <span class="age-restriction">{{ media.age_restriction }}+</span>
+                    <span class="rating">★ {{ media.rating }}</span>
+                    <span class="country">{{ media.country }}</span>
+                </div>
+                
+                <p class="media-description">{{ media.description }}</p>
+                
+                <div class="series-stats">
+                    <p>Сезонов: {{ seasons|length }}</p>
+                    <p>Всего эпизодов: {{ total_episodes }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="media-actions">
+            <button class="btn btn-secondary">В избранное</button>
+            <button class="btn btn-secondary">Смотреть позже</button>
+        </div>
+
+        <!-- Актеры и съемочная группа -->
+        {% if participants %}
+        <section class="cast-section">
+            <h2 class="section-title">Актеры и съемочная группа</h2>
+            <div class="cast-grid">
+                {% for participant in participants %}
+                <div class="cast-item">
+                    {% if participant.person.photo %}
+                        <img src="{{ participant.person.photo.url }}" alt="{{ participant.person }}" class="cast-photo">
+                    {% else %}
+                        <div class="cast-photo placeholder">Фото</div>
+                    {% endif %}
+                    <h3 class="cast-name">{{ participant.person.first_name }} {{ participant.person.last_name }}</h3>
+                    <p class="cast-role">
+                        {{ participant.get_role_display }}
+                        {% if participant.role_name %}({{ participant.role_name }}){% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
-        </div>
-        {% endfor %}
-    </section>
-    {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Сезоны и эпизоды -->
+        {% if seasons %}
+        <section class="seasons-section">
+            <h2 class="section-title">Сезоны и эпизоды</h2>
+            {% for season in seasons %}
+            <div class="season">
+                <div class="season-header" onclick="toggleSeason({{ season.id }})">
+                    <h3 class="season-title">Сезон {{ season.season_number }}</h3>
+                    <span class="season-toggle">▼</span>
+                </div>
+                {% if season.description %}
+                    <p class="season-description">{{ season.description }}</p>
+                {% endif %}
+                
+                <div class="episodes-list" id="season-{{ season.id }}" style="display: none;">
+                    {% for episode in season.episode_set.all %}
+                    <div class="episode-item">
+                        <div class="episode-number">Эпизод {{ episode.episode_number }}</div>
+                        <div class="episode-info">
+                            <h4 class="episode-title">{{ episode.title }}</h4>
+                            <p class="episode-meta">
+                                {{ episode.duration }} мин
+                                {% if episode.release_date %}
+                                    • {{ episode.release_date|date:"d.m.Y" }}
+                                {% endif %}
+                            </p>
+                            {% if episode.description %}
+                                <p class="episode-description">{{ episode.description }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="episode-actions">
+                            {% if episode.video_file %}
+                               <a href="{% url 'kf_app:episode_detail' episode.id %}" class="btn btn-primary">
+                             Смотреть
+                            </a>
+                            {% else %}
+                                <button class="btn btn-disabled" disabled>Скоро</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+function toggleSeason(seasonId) {
+    const episodesList = document.getElementById('season-' + seasonId);
+    const toggle = event.currentTarget.querySelector('.season-toggle');
+    
+    if (episodesList.style.display === 'none') {
+        episodesList.style.display = 'block';
+        toggle.textContent = '▲';
+    } else {
+        episodesList.style.display = 'none';
+        toggle.textContent = '▼';
+    }
+}
+</script>
 {% endblock %}

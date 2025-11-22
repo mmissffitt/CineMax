@@ -2,24 +2,26 @@
 {% load static %}
 
 {% block content %}
-    <section class="section">
-        <h2 class="section-title">Все фильмы</h2>
-        <div class="content-grid">
-            {% for movie in movies %}
-                <div class="content-item-large">
-                    <a href="{% url 'kf_app:movie_detail' movie.pk %}">
-                        {% if movie.poster %}
-                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="content-poster">
-                        {% else %}
-                            <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ movie.title }}" class="content-poster">
-                        {% endif %}
-                        <h3 class="content-title">{{ movie.title }}</h3>
-                        <p class="content-info">{{ movie.release_date|date:"d.m.Y" }} | Рейтинг: {{ movie.rating }}</p>
-                    </a>
-                </div>
-            {% empty %}
-                <p>Фильмов пока нет.</p>
-            {% endfor %}
-        </div>
-    </section>
+    <div class="media-container">
+        <section class="section">
+            <h2 class="section-title">Все фильмы</h2>
+            <div class="content-grid">
+                {% for movie in movies %}
+                    <div class="content-item-large">
+                        <a href="{% url 'kf_app:movie_detail' movie.pk %}">
+                            {% if movie.poster %}
+                                <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="content-poster">
+                            {% else %}
+                                <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ movie.title }}" class="content-poster">
+                            {% endif %}
+                            <h3 class="content-title">{{ movie.title }}</h3>
+                            <p class="content-info">{{ movie.release_date|date:"d.m.Y" }} | Рейтинг: {{ movie.rating }}</p>
+                        </a>
+                    </div>
+                {% empty %}
+                    <p>Фильмов пока нет.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
 {% endblock %}
