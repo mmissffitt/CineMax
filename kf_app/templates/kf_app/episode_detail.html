@@ -3,7 +3,6 @@
 
 {% block content %}
 <div class="episode-detail">
-    <!-- Навигация -->
     <div class="episode-navigation">
         <a href="{% url 'kf_app:series_detail' series.pk %}" class="back-link">
             ← Назад к сериалу "{{ series.title }}"
@@ -11,7 +10,6 @@
         <span class="episode-path">Сезон {{ season.season_number }} • Эпизод {{ episode.episode_number }}</span>
     </div>
 
-    <!-- Видеоплеер -->
     {% if episode.video_file %}
     <div class="video-player-container">
         <video id="episodeVideo" controls width="100%">
@@ -25,7 +23,6 @@
     </div>
     {% endif %}
 
-    <!-- Информация об эпизоде -->
     <div class="episode-info">
         <h1 class="episode-full-title">
             {{ series.title }} - Сезон {{ season.season_number }}, Эпизод {{ episode.episode_number }}: {{ episode.title }}
@@ -45,7 +42,6 @@
             </div>
         {% endif %}
 
-        <!-- Навигация между эпизодами -->
         <div class="episode-navigation-buttons">
             {% if episode.get_previous_episode %}
                 <a href="{% url 'kf_app:episode_detail' episode.get_previous_episode.id %}" class="btn btn-prev">

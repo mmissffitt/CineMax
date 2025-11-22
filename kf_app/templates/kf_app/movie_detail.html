@@ -1,4 +1,3 @@
-<!-- movie_detail.html -->
 {% extends 'kf_app/base.html' %}
 {% load static %}
 
@@ -36,7 +35,6 @@
             </div>
         </div>
 
-        <!-- Видеоплеер для фильмов -->
         {% if media.video_file %}
         <section class="video-section">
             <h2 class="section-title">Просмотр фильма</h2>
@@ -53,7 +51,6 @@
         </div>
         {% endif %}
 
-        <!-- Актеры и съемочная группа -->
         {% if participants %}
         <section class="cast-section">
             <h2 class="section-title">Актеры и съемочная группа</h2>

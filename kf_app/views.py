@@ -4,7 +4,6 @@ from .models import MediaContent, ContentParticipation, Season, Episode
 REGISTERED_USERS = {}
 
 def index(request):
-    # Обработка формы обратной связи
     if request.method == 'POST' and 'name' in request.POST:
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -13,7 +12,6 @@ def index(request):
         request.session['feedback_success'] = True
         return redirect('kf_app:index')
     
-    # Берем флаг из сессии и СРАЗУ УДАЛЯЕМ его
     feedback_success = request.session.pop('feedback_success', False)
     
     movies_sample = MediaContent.objects.filter(content_type='MOVIE')[:4] 
@@ -83,13 +81,11 @@ def episode_detail(request, episode_id):
     }
     return render(request, 'kf_app/episode_detail.html', context)
 
-# Страница входа
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         
-        # Проверяем существование пользователя в глобальном словаре
         if username in REGISTERED_USERS and REGISTERED_USERS[username]['password'] == password:
             request.session['is_authenticated'] = True
             request.session['username'] = username
@@ -107,7 +103,6 @@ def login_view(request):
     }
     return render(request, 'kf_app/login.html', context)
 
-# Страница регистрации
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -122,7 +117,6 @@ def register_view(request):
             }
             return render(request, 'kf_app/register.html', context)
         
-        # Сохраняем пользователя в глобальный словарь
         REGISTERED_USERS[username] = {
             'email': email,
             'password': password
@@ -138,7 +132,6 @@ def register_view(request):
     }
     return render(request, 'kf_app/register.html', context)
 
-# Страница профиля
 def profile_view(request):
     if not request.session.get('is_authenticated'):
         return redirect('kf_app:login')
@@ -153,7 +146,6 @@ def profile_view(request):
     }
     return render(request, 'kf_app/profile.html', context)
 
-# Выход
 def logout_view(request):
     request.session.flush()
     return redirect('kf_app:index')

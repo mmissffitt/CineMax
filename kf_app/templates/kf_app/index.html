@@ -50,7 +50,6 @@
         </div>
     </section>
 
-    <!-- Форма обратной связи ТОЛЬКО на главной -->
     <section class="section feedback-section-main">
         <h2 class="section-title">Обратная связь</h2>
         <p class="feedback-description">Есть вопросы или предложения? Напишите нам!</p>
@@ -72,7 +71,6 @@
         </div>
     </section>
 
-    <!-- Модальное окно успеха -->
     {% if feedback_success %}
     <div id="successModal" class="modal-overlay">
         <div class="modal-content">
@@ -87,7 +85,6 @@
             document.getElementById('successModal').style.display = 'none';
         }
         
-        // Закрытие по клику вне модального окна
         document.getElementById('successModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
