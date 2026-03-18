@@ -11,6 +11,19 @@
     <header class="header">
         <div class="container">
             <h1 class="logo"><a href="{% url 'kf_app:index' %}">CINEMAX</a></h1>
+            
+            <div class="header-search">
+                <form class="search-form" action="#" method="GET" id="headerSearchForm">
+                    <input type="text" 
+                           id="headerSearchInput" 
+                           placeholder="Поиск фильмов и сериалов..." 
+                           class="header-search-input"
+                           autocomplete="off">
+                    <button type="submit" class="header-search-btn"></button>
+                </form>
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+
             <nav class="nav">
                 <ul>
                     <li><a href="{% url 'kf_app:movies_list' %}">Фильмы</a></li>
@@ -32,6 +45,7 @@
         </div>
     </header>
 
+
     <div class="content-wrapper">
         <main class="main-content">
             <div class="container">
@@ -43,7 +57,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 CINEMAX. Все права защищены.</p>
+            <p>&copy; 2026  CINEMAX. Все права защищены.</p>
         </div>
     </footer>
 </body>

@@ -2,26 +2,73 @@
 {% load static %}
 
 {% block content %}
-    <div class="media-container">
-        <section class="section">
+<div class="media-container">
+    <section class="section">
+        <div class="filters-header">
             <h2 class="section-title">Все сериалы</h2>
-            <div class="content-grid">
-                {% for serie in series %}
-                    <div class="content-item-large">
-                        <a href="{% url 'kf_app:series_detail' serie.pk %}">
-                            {% if serie.poster %}
-                                <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster">
-                            {% else %}
-                                <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ serie.title }}" class="content-poster">
-                            {% endif %}
-                            <h3 class="content-title">{{ serie.title }}</h3>
-                            <p class="content-info">{{ serie.release_date|date:"d.m.Y" }} | Рейтинг: {{ serie.rating }}</p>
-                        </a>
-                    </div>
-                {% empty %}
-                    <p>Сериалов пока нет.</p>
-                {% endfor %}
+
+            <div class="sort-box">
+                <select id="sortSelect" class="sort-select">
+                    <option value="-release_date">По дате (новые)</option>
+                    <option value="release_date">По дате (старые)</option>
+                    <option value="-rating">По рейтингу (высокий)</option>
+                    <option value="rating">По рейтингу (низкий)</option>
+                    <option value="title">По названию (А-Я)</option>
+                    <option value="-title">По названию (Я-А)</option>
+                </select>
             </div>
-        </section>
+        </div>
+
+<div class="filters-section">
+    <button class="filters-toggle" type="button" id="filtersToggleBtn">
+        <span class="toggle-text">Фильтры по жанрам</span>
+        <span class="toggle-icon">▼</span>
+    </button>
+    
+    <div class="genres-filter" id="genresFilter" style="display: none;">
+        <div class="genres-filter-header">
+            <h4>Выберите жанры:</h4>
+            <button id="clearFilters" class="clear-filters-btn">Сбросить все</button>
+        </div>
+        <div class="genres-list" id="genresList">
+        </div>
     </div>
+</div>
+
+        <div class="content-grid" id="contentGrid">
+            {% for serie in series %}
+                {% include 'kf_app/includes/series_card.html' with serie=serie %}
+            {% endfor %}
+        </div>
+
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <div class="spinner"></div>
+            <p>Загрузка...</p>
+        </div>
+
+        <div id="loadMoreContainer" class="more-link">
+            <button id="loadMoreBtn" class="btn btn-primary" style="display: none;">
+                Загрузить еще
+            </button>
+        </div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+            <p>Сериалы не найдены</p>
+        </div>
+    </section>
+</div>
+
+<script src="{% static 'kf_app/js/content-filters.js' %}"></script>
+<script>
+    window.contentData = {
+        contentType: 'series',  
+        initialGenres: [
+            {% for genre in genres %}
+            { id: {{ genre.id }}, name: "{{ genre.name|escapejs }}" },
+            {% endfor %}
+        ],
+        totalPages: {{ total_pages|default:1 }},
+        currentPage: 1
+    };
+</script>
 {% endblock %}

@@ -1,0 +1,17 @@
+{% load static %}
+<div class="content-item-large" data-id="{{ serie.id }}">
+    <a href="{% url 'kf_app:series_detail' serie.pk %}">
+        {% if serie.poster %}
+            <img src="{{ serie.poster.url }}" alt="{{ serie.title }}" class="content-poster" loading="lazy">
+        {% else %}
+            <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ serie.title }}" class="content-poster" loading="lazy">
+        {% endif %}
+        <h3 class="content-title">{{ serie.title }}</h3>
+        <p class="content-info">{{ serie.release_date|date:"d.m.Y" }} | Рейтинг: {{ serie.rating }}</p>
+        <div class="series-genres" style="display: none;" data-genres="{% for genre in serie.genres.all %}{{ genre.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
+            {% for genre in serie.genres.all %}
+                <span>{{ genre.name }}</span>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+    </a>
+</div>

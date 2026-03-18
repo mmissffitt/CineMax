@@ -1,0 +1,17 @@
+{% load static %}
+<div class="content-item-large" data-id="{{ movie.id }}">
+    <a href="{% url 'kf_app:movie_detail' movie.pk %}">
+        {% if movie.poster %}
+            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="content-poster" loading="lazy">
+        {% else %}
+            <img src="{% static 'kf_app/images/default_poster.jpg' %}" alt="{{ movie.title }}" class="content-poster" loading="lazy">
+        {% endif %}
+        <h3 class="content-title">{{ movie.title }}</h3>
+        <p class="content-info">{{ movie.release_date|date:"d.m.Y" }} | Рейтинг: {{ movie.rating }}</p>
+        <div class="movie-genres" style="display: none;" data-genres="{% for genre in movie.genres.all %}{{ genre.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
+            {% for genre in movie.genres.all %}
+                <span>{{ genre.name }}</span>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+    </a>
+</div>

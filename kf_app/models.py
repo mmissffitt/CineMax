@@ -33,7 +33,6 @@ class MediaContent(models.Model):
     image = models.ImageField("Изображение", upload_to="media_content_images/", null=True, blank=True)
     poster = models.ImageField("Постер", upload_to="media_content_posters/", null=True, blank=True)
     
-    # Добавляем видео для фильмов
     video_file = models.FileField(
         "Видеофайл", 
         upload_to="media_content_videos/", 

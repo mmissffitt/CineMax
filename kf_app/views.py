@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import MediaContent, ContentParticipation, Season, Episode
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from .models import MediaContent, ContentParticipation, Season, Episode, Genre
 
 REGISTERED_USERS = {}
 
@@ -30,17 +32,91 @@ def index(request):
 
 def movies_list(request):
     movies = MediaContent.objects.filter(content_type='MOVIE').order_by('-release_date')
+    genres = Genre.objects.all()
+
+    items_per_page = min(12, movies.count()) if movies.count() > 0 else 12
+    if items_per_page == 0:
+        items_per_page = 12
+    
+    paginator = Paginator(movies, items_per_page)
+    page = request.GET.get('page', 1)
+    movies_page = paginator.get_page(page)
+    
     context = {
-        'movies': movies,
+        'movies': movies_page,
+        'genres': genres,
+        'total_pages': paginator.num_pages,
     }
     return render(request, 'kf_app/movies.html', context)
 
 def series_list(request):
     series = MediaContent.objects.filter(content_type='SERIES').order_by('-release_date')
+    genres = Genre.objects.all()
+    
+    items_per_page = min(12, series.count()) if series.count() > 0 else 12
+    if items_per_page == 0:
+        items_per_page = 12
+    
+    paginator = Paginator(series, items_per_page)
+    page = request.GET.get('page', 1)
+    series_page = paginator.get_page(page)
+    
     context = {
-        'series': series,
+        'series': series_page,
+        'genres': genres,
+        'total_pages': paginator.num_pages,
     }
     return render(request, 'kf_app/series.html', context)
+
+def filter_content_api(request):
+    """API endpoint для фильтрации контента"""
+    content_type = request.GET.get('type', 'movie')
+    page = int(request.GET.get('page', 1))
+    search = request.GET.get('search', '')
+    sort = request.GET.get('sort', '-release_date')
+    genre_ids = request.GET.getlist('genres[]')
+    
+    # Определяем тип контента
+    if content_type == 'movie':
+        db_content_type = 'MOVIE'
+        template_name = 'kf_app/includes/movie_card.html'
+        context_var = 'movie'
+    else:
+        db_content_type = 'SERIES'
+        template_name = 'kf_app/includes/series_card.html'
+        context_var = 'serie'
+    
+    # Базовый запрос
+    queryset = MediaContent.objects.filter(content_type=db_content_type)
+    
+    # Поиск
+    if search:
+        queryset = queryset.filter(title__icontains=search)
+    
+    # Фильтр по жанрам
+    if genre_ids:
+        queryset = queryset.filter(genres__id__in=genre_ids).distinct()
+    
+    # Сортировка
+    queryset = queryset.order_by(sort)
+    
+    # Пагинация
+    paginator = Paginator(queryset, 12)
+    current_page = paginator.get_page(page)
+    
+    # Формируем HTML для карточек
+    from django.template.loader import render_to_string
+    
+    html = ''
+    for item in current_page:
+        html += render_to_string(template_name, {context_var: item})
+    
+    return JsonResponse({
+        'html': html,
+        'has_next': current_page.has_next(),
+        'total_pages': paginator.num_pages,
+        'current_page': page,
+    })
 
 def movie_detail(request, pk):
     movie = get_object_or_404(MediaContent, pk=pk, content_type='MOVIE')
@@ -149,3 +225,44 @@ def profile_view(request):
 def logout_view(request):
     request.session.flush()
     return redirect('kf_app:index')
+
+def search_api(request):
+    """API для поиска в хедере"""
+    query = request.GET.get('q', '')
+    
+    if len(query) < 2:
+        return JsonResponse({'results': []})
+    
+    movies = MediaContent.objects.filter(
+        content_type='MOVIE',
+        title__icontains=query
+    )[:5]
+    
+    series = MediaContent.objects.filter(
+        content_type='SERIES',
+        title__icontains=query
+    )[:5]
+    
+    results = []
+    
+    for movie in movies:
+        results.append({
+            'id': movie.id,
+            'title': movie.title,
+            'type': 'movie',
+            'poster': movie.poster.url if movie.poster else None,
+            'year': movie.release_date.year if movie.release_date else 'N/A',
+            'rating': movie.rating,
+        })
+    
+    for serie in series:
+        results.append({
+            'id': serie.id,
+            'title': serie.title,
+            'type': 'series',
+            'poster': serie.poster.url if serie.poster else None,
+            'year': serie.release_date.year if serie.release_date else 'N/A',
+            'rating': serie.rating,
+        })
+    
+    return JsonResponse({'results': results})
